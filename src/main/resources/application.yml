@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: loandemo
+
+server:
+  port: 8017
+
+sharding:
+  jdbc:
+    defaultDataSourceName:
+           type: com.zaxxer.hikari.HikariDataSource
+           driver-class-name: com.mysql.jdbc.Driver
+           username: xxxxxx
+           password: xxxxxx
+           jdbc-url: jdbc:mysql://47.92.74.175:3306/user?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    datasource:
+           names: ds
+           ds:
+             type: com.zaxxer.hikari.HikariDataSource
+             driver-class-name: com.mysql.jdbc.Driver
+             username: xxxxxx
+             password: xxxxxx
+             jdbc-url: jdbc:mysql://47.92.74.175:3306/user?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    config:
+      sharding:
+        tables:
+          sys_log:
+            actual-data-nodes: ds.sys_log_${0..1}
+            table-strategy:
+              inline:
+                sharding-column: id
+                algorithm-expression: sys_log_${id % 2}
+            key-generator-column-name: id
+
+#mybaits-plus??????????mapper.xml?type ???
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  typeAliasesPackage: com.djtu.loandemo.entity
+  global-config:
+    #????  0:"???ID??", 1:"????ID",2:"????ID (??????ID)", 3:"????ID UUID";
+    id-type: 0
+    #???? 0:"????",1:"? NULL ??"),2:"????"
+    field-strategy: 1
+    #???????
+    db-column-underline: true
+    #??mapper ????
+    refresh-mapper: true
+    #??????????
+    #capital-mode: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+    # 打印sql
+    logging:
+      level:
+        com.ziding.product.cooperation.mapper: DEBUG
